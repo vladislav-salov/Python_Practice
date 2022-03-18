@@ -5,7 +5,7 @@ import time
 
 class Agent:
     MAX = 20
-    MATES = 10
+    NEIGHBOURS = 10
     PERCENT = 0.8
 
     def __init__(self, group):
@@ -17,18 +17,17 @@ class Agent:
         return abs(self.x - other.x) + abs(self.y - other.y)
 
     def happy(self, others):
-        mates = 0
-
+        neighbours = 0
         ms = []
         for other in others:
             ms.append((self.distance(other), other))
 
         ms.sort(key=lambda x: x[0])
-        for i in range(self.MATES):
+        for i in range(self.NEIGHBOURS):
             if ms[i][1].group == self.group:
-                mates += 1
+                neighbours += 1
 
-        return mates >= self.MATES * self.PERCENT
+        return neighbours >= self.NEIGHBOURS * self.PERCENT
 
     def update(self, others):
         if not self.happy(others):
@@ -41,13 +40,13 @@ class Agent:
                 break
 
 
-def sim(grs, field, k, p):
+def simulation(grs, field, k, p):
 
     Agent.PERCENT = p
     Agent.MAX = field
-    Agent.MATES = k
+    Agent.NEIGHBOURS = k
 
-    groups = ['1', '2']
+    groups = ['first', 'second']
 
     agents = [Agent(groups[0]) for i in range(grs[0])] + [Agent(groups[1]) for i in range(grs[1])]
     happy = []
@@ -71,14 +70,17 @@ def sim(grs, field, k, p):
             y[group].append(agent.y)
 
         plt.clf()
-
-        plt.plot(x[0], y[0], 's', markerfacecolor='white', markersize=10)
-        plt.plot(x[1], y[1], 's', markerfacecolor='black', markersize=10)
-
+        print(x[0], y[0])
+        plt.plot(x[0], y[0], 's', markerfacecolor='darkblue', markersize=10)
+        plt.plot(x[1], y[1], 's', markerfacecolor='darkgreen', markersize=10)
+        '''
+        ax = plt.gca()
+        ax.set_facecolor('yellow')
+        '''
         plt.draw()
         plt.gcf().canvas.flush_events()
-
         time.sleep(0.2)
+
     plt.ioff()
     plt.clf()
     plt.plot(happy)
@@ -86,4 +88,4 @@ def sim(grs, field, k, p):
 
 
 if __name__ == '__main__':
-    sim((80, 80), 20, 10, 0.8)
+    simulation((80, 80), 20, 10, 0.8)
